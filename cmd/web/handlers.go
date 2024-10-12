@@ -9,11 +9,13 @@ import (
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
+	// without this all not handled pages goes here
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
 	}
 
+	// external html templates
 	files := []string{
 		"./ui/html/base.tmpl",
 		"./ui/html/partials/nav.tmpl",
@@ -27,7 +29,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// the last parameter of Execute() represents any dynamical data we want tos end to pass in
+	// the last parameter of Execute() represents any dynamical data we want to end to pass in
 	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
 		log.Print(err.Error())
