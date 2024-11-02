@@ -1,11 +1,21 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
+	// input arg
+	addr := flag.String("addr", ":4000", "HTTP network address")
+	flag.Parse()
+
+	// log settings
+	infoLog := log.New(os.Stdout, "INFO\t", log.LUTC|log.Ldate|log.Ltime)
+	errorLog := log.New(os.Stderr, "ERROR\t", log.LUTC|log.Ldate|log.Ltime|log.Lshortfile)
+
 	mux := http.NewServeMux()
 
 	// file server which serves files out of "./ui/static"
@@ -16,7 +26,14 @@ func main() {
 	mux.HandleFunc("/snippet/view", snippetView)
 	mux.HandleFunc("/snippet/create", snippetCreate)
 
-	log.Print("Starting server on port :4000")
-	err := http.ListenAndServe(":4000", mux)
-	log.Fatal(err)
+	srv := &http.Server{
+		Addr:     *addr,
+		ErrorLog: errorLog,
+		Handler:  mux,
+	}
+
+	infoLog.Printf("Starting server on port %s", *addr)
+	err := srv.ListenAndServe()
+	// use fatal and panic only in main function
+	errorLog.Fatal(err)
 }
