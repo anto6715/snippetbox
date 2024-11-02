@@ -22,6 +22,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		"./ui/html/pages/home.tmpl",
 	}
 
+	// ... -> like * in python
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
 		log.Println(err.Error())
