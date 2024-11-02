@@ -28,27 +28,15 @@ func main() {
 		infoLog:  infoLog,
 	}
 
-	// create server mux
-	mux := http.NewServeMux()
-
-	// file server which serves files out of "./ui/static"
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
-	mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
-
-	// register handlers
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("/snippet/view", app.snippetView)
-	mux.HandleFunc("/snippet/create", app.snippetCreate)
-
 	// build custom server
 	srv := &http.Server{
 		Addr:     *addr,
 		ErrorLog: errorLog,
-		Handler:  mux,
+		Handler:  app.routes(),
 	}
 
+	// starting server
 	infoLog.Printf("Starting server on port %s", *addr)
 	err := srv.ListenAndServe()
-	// use fatal and panic only in main function
 	errorLog.Fatal(err)
 }
